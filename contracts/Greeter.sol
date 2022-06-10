@@ -9,6 +9,7 @@ contract Auction {
 mapping (address => uint) public mappAuc;
 mapping (address => uint) public playersValue;
 
+
 struct AuctionSt {  
     address bettor;
 }
@@ -27,6 +28,10 @@ function addBet() payable public {
 auctions.push(newAuction);
 
 addBetter();
+if(auctions.length > 2){
+    deleteLastPlayer();
+}
+
 }
 
 uint public TotalValue;
@@ -55,9 +60,16 @@ function addBetter() payable public {
 
 }
 
-
+function deleteLastPlayer() view public returns(address){
+    for(uint i = 0; i < auctions.length; i++){
+        AuctionSt memory _auc = auctions[i];
+        return _auc.bettor;
+    }
+    
+}
 
 function mainAuc() payable public {
-}
 
 }
+
+} 
