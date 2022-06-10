@@ -73,3 +73,23 @@ function mainAuc() payable public {
 }
 
 } 
+
+contract test {
+
+    string[] public data;
+
+    constructor() public {
+        data.push(" John");
+        data.push("Bruce");
+        data.push("Tom");
+        data.push("Bart");
+        data.push("Cherry");
+    }
+
+    function removeIn0rder(uint index) external {
+        for (uint i = index; i < data.length - 1; i++) {
+        data[i] = data[i + 1];
+        }
+        data.pop();
+        }
+}
