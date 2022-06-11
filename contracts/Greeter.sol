@@ -33,9 +33,7 @@ function addBet() payable public {
 auctions.push(newAuction);
 
 addBetter();
-if(auctions.length > 2){
-    deleteLastPlayer();
-}
+deleteLastPlayer();
 
 }
 
@@ -66,6 +64,8 @@ function addBetter() payable public {
 }
 
 function deleteLastPlayer() payable public {
+
+    
 
     if(auctions.length > 2){
         address deletedBit = auctions[0].bettor;
