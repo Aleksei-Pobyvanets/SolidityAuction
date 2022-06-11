@@ -4,6 +4,11 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
 
+pragma solidity >=0.7.0 <0.9.0;
+
+import "hardhat/console.sol";
+
+
 contract Auction {
 
 mapping (address => uint) public mappAuc;
@@ -55,21 +60,36 @@ function addBetter() payable public {
 
 
     playersValue[msg.sender] = totalPayPersom;
-    TotalValue = TotalValue + msg.value;
+    TotalValue = bal();
 
 
 }
 
-function deleteLastPlayer() view public returns(address){
-    for(uint i = 0; i < auctions.length; i++){
-        AuctionSt memory _auc = auctions[i];
-        return _auc.bettor;
+function deleteLastPlayer() payable public {
+
+    if(auctions.length > 2){
+        address deletedBit = auctions[0].bettor;
+        uint amountToGive = playersValue[deletedBit];
+
+        payable(deletedBit).transfer(amountToGive);
+
+        for (uint i = 0; i < auctions.length - 1; i++) {
+        auctions[i] = auctions[i + 1];
+
+        }
+        auctions.pop();
     }
     
+}
+function Length() view public returns(uint){
+    return auctions.length;
 }
 
 function mainAuc() payable public {
 
+}
+function bal() view public returns(uint){
+    return address(this).balance;
 }
 
 } 
