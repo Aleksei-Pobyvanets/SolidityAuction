@@ -4,12 +4,46 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
 
-pragma solidity >=0.7.0 <0.9.0;
+contract ERC20Token {
+    uint public totalSupply;
+    mapping(address => uint) public balanceOf;
+    mapping(address => mapping(address => uint)) public allowance;
+    string public name = "PobyvanetsToken";
+    string public symbol = "POTO";
+    uint public decimals = 2;
 
-import "hardhat/console.sol";
+    function transfer(address recipient, uint amount) external returns(bool){
+        balanceOf[msg.sender] -= amount;
+        balanceOf[recipient] += amount;
+        return true;
+    }
 
+    function approve(address spender, uint amount) external returns(bool){
+        allowance[msg.sender][spender] = amount;
+        return true;
+    }
 
-contract Auction {
+    function buy() external payable {
+        buyTokens(msg.sender);
+    }
+
+    function mint(uint amount) public {
+        balanceOf[msg.sender] += amount;
+        totalSupply += amount;
+    }
+
+    function buyTokens(address beneficiary) public payable {
+        require(beneficiary != address(0));
+        uint256 weiAmount = msg.value;
+        uint256 tokens = weiAmount*100;
+
+        mint(tokens);
+    }
+}
+
+// zzzzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzž
+
+contract Auction is ERC20Token {
 
 mapping (address => uint) public mappAuc;
 mapping (address => uint) public playersValue;
@@ -20,6 +54,9 @@ struct AuctionSt {
     uint bettorAmount;
 }
 
+function c() view public returns(uint){
+    return decimals;
+}
 
 AuctionSt[] public auctions;
 
@@ -61,14 +98,12 @@ function addBetter() payable public {
  
 
     playersValue[msg.sender] = totalPayPersom;
-    // TotalValue = bal();
 }
 
 function deleteLastPlayer() payable public {
     if(auctions.length > 2){
         address deletedBit = auctions[0].bettor;
         uint deletedBitAmount = auctions[0].bettorAmount;
-        // uint amountToGive = playersValue[deletedBit];
 
         payable(deletedBit).transfer(deletedBitAmount);
 
@@ -83,32 +118,8 @@ function deleteLastPlayer() payable public {
 function Length() view public returns(uint){
     return auctions.length;
 }
-
-function mainAuc() payable public {
-
-}
 function bal() view public returns(uint){
     return address(this).balance;
 }
 
 } 
-
-contract test {
-
-    string[] public data;
-
-    constructor() public {
-        data.push(" John");
-        data.push("Bruce");
-        data.push("Tom");
-        data.push("Bart");
-        data.push("Cherry");
-    }
-
-    function removeIn0rder(uint index) external {
-        for (uint i = index; i < data.length - 1; i++) {
-        data[i] = data[i + 1];
-        }
-        data.pop();
-        }
-}
