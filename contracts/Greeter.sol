@@ -17,6 +17,7 @@ mapping (address => uint) public playersValue;
 
 struct AuctionSt {  
     address bettor;
+    uint bettorAmount;
 }
 
 
@@ -25,9 +26,11 @@ AuctionSt[] public auctions;
 
 function addBet() payable public {
     address addr = msg.sender;
+    uint amou = msg.value;
 
     AuctionSt memory newAuction = AuctionSt({
-    bettor: addr
+    bettor: addr,
+    bettorAmount: amou
 });
 
 auctions.push(newAuction);
@@ -37,7 +40,7 @@ deleteLastPlayer();
 
 }
 
-uint public TotalValue;
+uint public TotalValue = bal();
 uint public LastBet;
 
 function addBetter() payable public {
@@ -55,23 +58,19 @@ function addBetter() payable public {
     
     counter = counter + 1;
     mappAuc[msg.sender] = counter;
-
+ 
 
     playersValue[msg.sender] = totalPayPersom;
-    TotalValue = bal();
-
-
+    // TotalValue = bal();
 }
 
 function deleteLastPlayer() payable public {
-
-    
-
     if(auctions.length > 2){
         address deletedBit = auctions[0].bettor;
-        uint amountToGive = playersValue[deletedBit];
+        uint deletedBitAmount = auctions[0].bettorAmount;
+        // uint amountToGive = playersValue[deletedBit];
 
-        payable(deletedBit).transfer(amountToGive);
+        payable(deletedBit).transfer(deletedBitAmount);
 
         for (uint i = 0; i < auctions.length - 1; i++) {
         auctions[i] = auctions[i + 1];
