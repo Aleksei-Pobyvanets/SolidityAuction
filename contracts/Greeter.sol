@@ -48,10 +48,34 @@ contract Auction is ERC20Token {
 mapping (address => uint) public mappAuc;
 mapping (address => uint) public playersValue;
 
+uint start;
+uint end;
+bool public status = false;
 
 struct AuctionSt {  
     address bettor;
     uint bettorAmount;
+}
+
+modifier timeIsOwer{
+    require(block.timestamp <= end, "Timer is not works");
+    _;
+}
+
+function startFunc(uint totalTime) public returns(bool){
+    require(totalTime >= 15, "invalid value");
+    require(status ==! true, "Already started");
+    start = block.timestamp;
+    end = totalTime + start;
+    if(end == block.timestamp){
+        return status = false;
+    } else {
+        return status = true;
+    }
+}
+function getTimerLeft() public view timeIsOwer returns(uint){
+    require(status , "Start timer");
+    return end - block.timestamp;
 }
 
 function c() view public returns(uint){
