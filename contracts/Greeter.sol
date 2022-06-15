@@ -48,7 +48,7 @@ contract Auction is ERC20Token {
 mapping (address => uint) public mappAuc;
 mapping (address => uint) public playersValue;
 
-uint start;
+// uint start;
 uint end;
 bool public status = false;
 uint public totalTime;
@@ -59,16 +59,34 @@ struct AuctionSt {
 }
 
 modifier timeIsOwer{
-    require(block.timestamp <= end, "Timer is not works");
+    require(block.timestamp > end, "Timer is not works");
     _;
 }
+
+
+// function startF() public timeIsOwer{
+//     start = block.timestamp;
+// }
+function endF(uint _index) public timeIsOwer{
+    totalTime = _index;
+    require(totalTime >= 15, "invalid value");
+    require(status == false, "Ended");
+    
+    end = totalTime - block.timestamp;
+    if(totalTime > block.timestamp){
+        status = true;
+    }
+    status = false;
+}
+
+
 
 function getTimerLeft() public view timeIsOwer returns(uint){
     require(status , "Start timer");
     return end - block.timestamp;
 }
 
-function addBet() payable public {
+function addBet() payable timeIsOwer public {
     require(status , "Start timer");
     // require()
     address addr = msg.sender;
@@ -86,18 +104,6 @@ deleteLastPlayer();
 }
 
 AuctionSt[] public auctions;
-
-function createAuc(uint _time) public {
-    require(_time >= 15, "invalid value");
-    require(totalTime > 0, "Already started");
-    totalTime = _time;
-    status = true;
-    
-addBet();
-}
-
-
-
 
 uint public TotalValue = bal();
 uint public LastBet;
@@ -142,6 +148,12 @@ function Length() view public returns(uint){
 }
 function bal() view public returns(uint){
     return address(this).balance;
+}
+function getReward() public returns(address){
+    uint leng = Length();
+    leng - 1;
+    address Winbettor = auctions[leng].bettor;
+    return Winbettor;
 }
 
 } 
