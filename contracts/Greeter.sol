@@ -6,11 +6,11 @@ import "hardhat/console.sol";
 
 contract ERC20Token {
     uint public totalSupply;
-    mapping(address => uint) public balanceOf;
-    mapping(address => mapping(address => uint)) public allowance;
-    string public name = "PobyvanetsToken";
-    string public symbol = "POTO";
-    uint public decimals = 2;
+    mapping(address => uint)  balanceOf;
+    mapping(address => mapping(address => uint))  allowance;
+    string  name = "PobyvanetsToken";
+    string  symbol = "POTO";
+    uint  decimals = 2;
 
     function transfer(address recipient, uint amount) external returns(bool){
         balanceOf[msg.sender] -= amount;
@@ -51,6 +51,7 @@ mapping (address => uint) public playersValue;
 uint start;
 uint end;
 bool public status = false;
+uint public totalTime;
 
 struct AuctionSt {  
     address bettor;
@@ -62,30 +63,14 @@ modifier timeIsOwer{
     _;
 }
 
-function startFunc(uint totalTime) public returns(bool){
-    require(totalTime >= 15, "invalid value");
-    require(status ==! true, "Already started");
-    start = block.timestamp;
-    end = totalTime + start;
-    if(end == block.timestamp){
-        return status = false;
-    } else {
-        return status = true;
-    }
-}
 function getTimerLeft() public view timeIsOwer returns(uint){
     require(status , "Start timer");
     return end - block.timestamp;
 }
 
-function c() view public returns(uint){
-    return decimals;
-}
-
-AuctionSt[] public auctions;
-
-
 function addBet() payable public {
+    require(status , "Start timer");
+    // require()
     address addr = msg.sender;
     uint amou = msg.value;
 
@@ -98,8 +83,21 @@ auctions.push(newAuction);
 
 addBetter();
 deleteLastPlayer();
-
 }
+
+AuctionSt[] public auctions;
+
+function createAuc(uint _time) public {
+    require(_time >= 15, "invalid value");
+    require(totalTime > 0, "Already started");
+    totalTime = _time;
+    status = true;
+    
+addBet();
+}
+
+
+
 
 uint public TotalValue = bal();
 uint public LastBet;
