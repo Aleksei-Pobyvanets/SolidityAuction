@@ -48,9 +48,9 @@ contract Auction is ERC20Token {
 mapping (address => uint) public mappAuc;
 mapping (address => uint) public playersValue;
 
-// uint start;
-uint end;
-bool public status = false;
+uint public start;
+uint public end;
+bool public status;
 uint public totalTime;
 
 struct AuctionSt {  
@@ -58,49 +58,47 @@ struct AuctionSt {
     uint bettorAmount;
 }
 
-modifier timeIsOwer{
-    require(block.timestamp > end, "Timer is not works");
-    _;
-}
-
-
-// function startF() public timeIsOwer{
-//     start = block.timestamp;
+// modifier timeIsOwer{
+//     require(block.timestamp < end, "Timer is not works");
+//     _;
 // }
-function endF(uint _index) public timeIsOwer{
-    totalTime = _index;
+
+
+
+function endF(uint _val) external {
+    totalTime = _val;
     require(totalTime >= 15, "invalid value");
-    require(status == false, "Ended");
-    
-    end = totalTime - block.timestamp;
-    if(totalTime > block.timestamp){
-        status = true;
-    }
-    status = false;
+    start = block.timestamp;
+    end = start + _val;
+    status = true;
 }
 
 
 
-function getTimerLeft() public view timeIsOwer returns(uint){
-    require(status , "Start timer");
+function getTimerLeft() public view returns(uint){
     return end - block.timestamp;
 }
 
-function addBet() payable timeIsOwer public {
-    require(status , "Start timer");
-    // require()
-    address addr = msg.sender;
-    uint amou = msg.value;
+function addBet() payable  public {
+    require(status == true , "Start timer");
+    if(getTimerLeft() > 0){
+        address addr = msg.sender;
+            uint amou = msg.value;
 
-    AuctionSt memory newAuction = AuctionSt({
-    bettor: addr,
-    bettorAmount: amou
-});
+            AuctionSt memory newAuction = AuctionSt({
+            bettor: addr,
+            bettorAmount: amou
+            });
 
-auctions.push(newAuction);
+        auctions.push(newAuction);
 
-addBetter();
-deleteLastPlayer();
+        addBetter();
+        deleteLastPlayer();
+    }else{
+        getReward();
+    }   
+
+    
 }
 
 AuctionSt[] public auctions;
@@ -129,7 +127,7 @@ function addBetter() payable public {
 }
 
 function deleteLastPlayer() payable public {
-    if(auctions.length > 2){
+    if(auctions.length > 5){
         address deletedBit = auctions[0].bettor;
         uint deletedBitAmount = auctions[0].bettorAmount;
 
@@ -149,11 +147,29 @@ function Length() view public returns(uint){
 function bal() view public returns(uint){
     return address(this).balance;
 }
-function getReward() public returns(address){
-    uint leng = Length();
-    leng - 1;
-    address Winbettor = auctions[leng].bettor;
-    return Winbettor;
+function getReward() public payable returns(address){
+        uint leng = auctions.length;
+        address deletedBit1 = auctions[leng].bettor;
+        uint first = bal() / 2;
+
+        
+        uint secUint = leng - 1;
+        address deletedBit2 = auctions[secUint].bettor;
+        uint second = (30/bal())*bal();
+
+        uint secUint2 = leng - 2;
+        address deletedBit3 = auctions[secUint2].bettor;
+        uint third = (20/bal())*bal();
+
+
+        payable(deletedBit1).transfer(first);
+        payable(deletedBit2).transfer(second);
+        payable(deletedBit3).transfer(third);
+
+}
+
+function donate() public payable{
+
 }
 
 } 
