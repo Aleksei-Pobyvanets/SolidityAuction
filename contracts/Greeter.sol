@@ -147,20 +147,22 @@ function Length() view public returns(uint){
 function bal() view public returns(uint){
     return address(this).balance;
 }
-function getReward() public payable returns(address){
-        uint leng = auctions.length;
+function getReward() public payable {
+        uint leng = auctions.length - 1;
+        uint balamce = address(this).balance; 
         address deletedBit1 = auctions[leng].bettor;
-        uint first = bal() / 2;
+        uint first = balamce / 2;
+        uint second = (30/balamce)*balamce;
+        uint third = (20/balamce)*balamce;
 
         
-        uint secUint = leng - 1;
+        uint secUint = auctions.length - 2; 
         address deletedBit2 = auctions[secUint].bettor;
-        uint second = (30/bal())*bal();
+        
 
-        uint secUint2 = leng - 2;
+        uint secUint2 = auctions.length - 3;
         address deletedBit3 = auctions[secUint2].bettor;
-        uint third = (20/bal())*bal();
-
+        
 
         payable(deletedBit1).transfer(first);
         payable(deletedBit2).transfer(second);
