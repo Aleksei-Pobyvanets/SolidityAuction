@@ -48,8 +48,8 @@ contract Auction is ERC20Token {
 mapping (address => uint) public mappAuc;
 mapping (address => uint) public playersValue;
 
-uint public start;
-uint public end;
+uint  start;
+uint  end;
 bool public status;
 uint public totalTime;
 
@@ -72,7 +72,6 @@ function endF(uint _val) external {
     end = start + _val;
     status = true;
 }
-
 
 
 function getTimerLeft() public view returns(uint){
@@ -103,7 +102,7 @@ function addBet() payable  public {
 
 AuctionSt[] public auctions;
 
-uint public TotalValue = bal();
+uint public TotalValue = address(this).balance;
 uint public LastBet;
 
 function addBetter() payable public {
@@ -141,25 +140,18 @@ function deleteLastPlayer() payable public {
     }
     
 }
-function Length() view public returns(uint){
-    return auctions.length;
-}
-function bal() view public returns(uint){
-    return address(this).balance;
-}
 function getReward() public payable {
         uint leng = auctions.length - 1;
         uint balamce = address(this).balance; 
         address deletedBit1 = auctions[leng].bettor;
         uint first = balamce / 2;
-        uint second = (30/balamce)*balamce;
-        uint third = (20/balamce)*balamce;
+        uint second = (balamce*30)/100; 
+        uint third = (balamce*20)/100;
 
         
         uint secUint = auctions.length - 2; 
         address deletedBit2 = auctions[secUint].bettor;
         
-
         uint secUint2 = auctions.length - 3;
         address deletedBit3 = auctions[secUint2].bettor;
         
@@ -168,10 +160,9 @@ function getReward() public payable {
         payable(deletedBit2).transfer(second);
         payable(deletedBit3).transfer(third);
 
-}
-
-function donate() public payable{
-
+        totalTime = 0;
+        LastBet = 0;
+        delete auctions;
 }
 
 } 
