@@ -176,6 +176,11 @@ function getReward() public payable {
         address deletedBit3 = auctions[secUint2].bettor;
         
 
+        // transERC(deletedBit1, first);
+        // transfer(deletedBit1, first);
+        // ERC20Token.transfer1(deletedBit2, second);
+        // ERC20Token.transfer1(deletedBit3, third);
+
         payable(deletedBit1).transfer(first);
         payable(deletedBit2).transfer(second);
         payable(deletedBit3).transfer(third);
@@ -189,5 +194,8 @@ function getReward() public payable {
         revert();
     }     
 }
+// function transERC(address deletedBit1, uint first) public payable{
+//     (address deletedBit1, uint first) = ERC20Token.approve{value: first}(deletedBit1);
+// }
 
 } 
