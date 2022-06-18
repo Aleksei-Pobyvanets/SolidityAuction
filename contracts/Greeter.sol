@@ -3,47 +3,7 @@ pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
 
-
-contract ERC20Token {
-    uint public totalSupply;
-    mapping(address => uint)  balanceOf;
-    mapping(address => mapping(address => uint))  allowance;
-    string  name = "PobyvanetsToken";
-    string  symbol = "POTO";
-    uint  decimals = 2;
-
-    function transfer(address recipient, uint amount) external returns(bool){
-        balanceOf[msg.sender] -= amount;
-        balanceOf[recipient] += amount;
-        return true;
-    }
-
-    function approve(address spender, uint amount) external returns(bool){
-        allowance[msg.sender][spender] = amount;
-        return true;
-    }
-
-    function buy() external payable {
-        buyTokens(msg.sender);
-    }
-
-    function mint(uint amount) public {
-        balanceOf[msg.sender] += amount;
-        totalSupply += amount;
-    }
-
-    function buyTokens(address beneficiary) public payable {
-        require(beneficiary != address(0));
-        uint256 weiAmount = msg.value;
-        uint256 tokens = weiAmount*100;
-
-        mint(tokens);
-    }
-}
-
-// zzzzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzžzzzž
-
-contract Auction is ERC20Token {
+contract Auction {
 
 mapping (address => uint) public mappAuc;
 mapping (address => uint) public playersValue;
@@ -66,7 +26,6 @@ modifier OnlyOwner{
 }
 
 function endF(uint _val) external {
-    
     require(totalTime <= 0, "Already started");
     uint val = _val;
     require(val > 15, "invalid value");
@@ -85,7 +44,6 @@ function addBet() payable external {
     require(status == true , "Start timer");
 
     if(end > block.timestamp){
-
 
             if(getTimerLeft() > 0){
             address addr = msg.sender;
@@ -119,7 +77,6 @@ function addBet() payable external {
         }else{
             getReward();
         }  
-
 
     }else {
         status = false;
@@ -174,12 +131,6 @@ function getReward() public payable {
         
         uint secUint2 = auctions.length - 3;
         address deletedBit3 = auctions[secUint2].bettor;
-        
-
-        // transERC(deletedBit1, first);
-        // transfer(deletedBit1, first);
-        // ERC20Token.transfer1(deletedBit2, second);
-        // ERC20Token.transfer1(deletedBit3, third);
 
         payable(deletedBit1).transfer(first);
         payable(deletedBit2).transfer(second);
@@ -194,8 +145,5 @@ function getReward() public payable {
         revert();
     }     
 }
-// function transERC(address deletedBit1, uint first) public payable{
-//     (address deletedBit1, uint first) = ERC20Token.approve{value: first}(deletedBit1);
-// }
 
 } 
